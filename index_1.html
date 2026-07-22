@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhammaddiyor — Videograf &amp; Video Muharrir</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #0b0b0c;
+    --bg-card: #141416;
+    --bg-card-hover: #1b1b1e;
+    --line: #26262a;
+    --text: #ededea;
+    --text-muted: #8a8a8e;
+    --accent: #ff4433;
+    --accent-dim: #7a2018;
+    --font-display: 'Archivo', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* ---------- scanline texture (ambient, quiet) ---------- */
+  body::before{
+    content:"";
+    position: fixed;
+    inset:0;
+    pointer-events:none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.012) 0px,
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 2;
+    mix-blend-mode: overlay;
+  }
+
+  a{ color: inherit; text-decoration:none; }
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- top bar ---------- */
+  header.top{
+    position: fixed; top:0; left:0; right:0;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgba(11,11,12,0.92), rgba(11,11,12,0));
+    padding: 18px 0;
+  }
+  .top-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1080px; margin:0 auto; padding:0 24px;
+  }
+  .brand{ font-family: var(--font-display); font-weight:700; font-size:15px; letter-spacing:0.02em; }
+  .rec{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--font-mono); font-size:12px; color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .rec-dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:1; } 50%{ opacity:0.25; }
+  }
+  nav.top-links{ display:flex; gap:28px; font-size:13px; color: var(--text-muted); }
+  nav.top-links a:hover{ color: var(--text); }
+
+  @media (max-width: 640px){
+    nav.top-links{ display:none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height: 100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    position: relative;
+    padding-top: 80px;
+  }
+  .hero-tc{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 18px;
+  }
+  .hero h1{
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(42px, 9vw, 104px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .hero .role{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(20px, 3vw, 30px);
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .hero p.tagline{
+    max-width: 480px;
+    margin-top: 28px;
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+  .hero-meta{
+    margin-top: 48px;
+    display:flex; gap: 32px; flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .hero-meta strong{ color: var(--text); display:block; font-size:13px; margin-bottom:4px; font-weight:500; }
+  .scroll-hint{
+    position:absolute; bottom: 36px; left: 24px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    display:flex; align-items:center; gap:8px;
+  }
+  .scroll-hint .bar{
+    width:1px; height: 28px; background: var(--line); position:relative; overflow:hidden;
+  }
+  .scroll-hint .bar::after{
+    content:""; position:absolute; top:-100%; left:0; width:100%; height:100%;
+    background: var(--accent);
+    animation: scrolldown 1.8s ease-in-out infinite;
+  }
+  @keyframes scrolldown{
+    0%{ top:-100%; } 60%{ top:100%; } 100%{ top:100%; }
+  }
+
+  /* ---------- section shared ---------- */
+  section{ padding: 120px 0; border-top: 1px solid var(--line); }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+  }
+  .section-title{
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 42px);
+    letter-spacing: -0.01em;
+    margin-bottom: 48px;
+  }
+
+  /* ---------- showreel ---------- */
+  .reel-frame{
+    position:relative;
+    aspect-ratio: 16/9;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .reel-frame iframe, .reel-frame video{
+    width:100%; height:100%; border:0; display:block;
+  }
+  .placeholder-cta{
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; text-align:center;
+    padding: 24px;
+  }
+  .play-icon{
+    width:56px; height:56px; border-radius:50%;
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s, transform .2s;
+  }
+  .reel-frame:hover .play-icon{ border-color: var(--accent); transform: scale(1.06); }
+  .play-icon svg{ fill: var(--text); margin-left: 3px; }
+  .frame-tc{
+    position:absolute; bottom:12px; left:14px;
+    font-family: var(--font-mono); font-size:11px; color: var(--text-muted);
+  }
+  .frame-tc.right{ left:auto; right:14px; }
+
+  /* ---------- projects grid ---------- */
+  .grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px){ .grid{ grid-template-columns: 1fr; } }
+
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow:hidden;
+    transition: background .2s, transform .2s;
+  }
+  .card:hover{ background: var(--bg-card-hover); transform: translateY(-2px); }
+  .card .thumb{
+    aspect-ratio: 16/9;
+    position: relative;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .card .thumb .play-icon{ width:44px; height:44px; }
+  .card .thumb .dur{
+    position:absolute; bottom:10px; right:10px;
+    font-family: var(--font-mono); font-size:11px; color: var(--text-muted);
+    background: rgba(11,11,12,0.7); padding: 2px 6px; border-radius:2px;
+  }
+  .card .info{ padding: 18px 20px; }
+  .card .info .tag{
+    font-family: var(--font-mono); font-size:11px; color: var(--accent); letter-spacing:0.04em;
+  }
+  .card .info h3{
+    font-family: var(--font-display); font-weight:700; font-size:18px; margin-top:8px;
+  }
+  .card .info p{ color: var(--text-muted); font-size: 13px; margin-top: 6px; }
+
+  /* ---------- skills ---------- */
+  .skills-list{ display:flex; flex-direction:column; gap:0; }
+  .skill-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 13px;
+  }
+  .skill-row:first-child{ border-top: 1px solid var(--line); }
+  .skill-row .name{ font-family: var(--font-body); font-size:15px; }
+  .meter{ display:flex; gap:4px; }
+  .meter span{ width:16px; height:8px; background: var(--line); border-radius:1px; }
+  .meter span.on{ background: var(--accent); }
+  .skill-status{ color: var(--text-muted); font-size:11px; min-width:110px; text-align:right; }
+
+  /* ---------- contact ---------- */
+  .contact-grid{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap: 32px;
+  }
+  .contact-links{ display:flex; flex-direction:column; gap: 10px; }
+  .contact-links a{
+    font-family: var(--font-display); font-weight:700; font-size: clamp(22px,4vw,32px);
+    display:inline-flex; align-items:center; gap:10px;
+    width: fit-content;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s, color .2s;
+  }
+  .contact-links a:hover{ border-color: var(--accent); color: var(--accent); }
+
+  footer{
+    padding: 32px 0 48px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    border-top: 1px solid var(--line);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .rec-dot, .scroll-hint .bar::after{ animation: none; }
+    html{ scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">MUHAMMADDIYOR</div>
+    <nav class="top-links">
+      <a href="#reel">Showreel</a>
+      <a href="#loyihalar">Loyihalar</a>
+      <a href="#konikmalar">Ko'nikmalar</a>
+      <a href="#aloqa">Aloqa</a>
+    </nav>
+    <div class="rec"><span class="rec-dot"></span><span id="tc-live">00:00:00:00</span></div>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <div class="hero-tc">TC 00:00:00:00 — INTRO</div>
+  <h1>Muhammaddiyor</h1>
+  <div class="role">Videograf &amp; Video Muharrir</div>
+  <p class="tagline">Har bir kadr — hikoyaning bir bo'lagi. Men ularni birlashtirib, ta'sirchan videoga aylantiraman.</p>
+  <div class="hero-meta">
+    <div><strong>Tajriba</strong>2 yil</div>
+    <div><strong>Asosiy vosita</strong>Adobe Premiere Pro</div>
+    <div><strong>Qo'shimcha</strong>After Effects, DaVinci Resolve</div>
+  </div>
+  <div class="scroll-hint"><div class="bar"></div>SCROLL</div>
+</section>
+
+<section id="reel" class="wrap">
+  <div class="eyebrow">TC 00:01:00:00 — SHOWREEL</div>
+  <div class="section-title">Asosiy reel</div>
+
+  <!-- Bu bo'lim pastdagi "Tanlangan ishlar" ro'yxatidan avtomatik almashib turadi (REEL_ITEMS massivi orqali).
+       Yangi loyiha qo'shsangiz, REEL_ITEMS ga ham qo'shing — shu yerda avtomatik ko'rinadi. -->
+  <a id="reel-frame" class="reel-frame" href="#" target="_blank" rel="noopener" style="display:flex; text-decoration:none;">
+    <div id="reel-bg" style="position:absolute; inset:0; background-size:cover; background-position:center; transition:opacity .5s ease;"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(11,11,12,0.85) 0%, rgba(11,11,12,0.15) 45%, rgba(11,11,12,0.35) 100%);"></div>
+    <div class="play-icon" style="position:relative; z-index:1;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+    <div style="position:absolute; left:20px; bottom:44px; z-index:1; max-width:80%;">
+      <div id="reel-tag" style="font-family:var(--font-mono); font-size:11px; color:var(--accent); letter-spacing:0.05em; margin-bottom:6px;"></div>
+      <div id="reel-title" style="font-family:var(--font-display); font-weight:700; font-size:20px; color:var(--text);"></div>
+    </div>
+    <span class="frame-tc">00:00:00:00</span>
+    <span id="reel-counter" class="frame-tc right">1 / 5</span>
+  </a>
+</section>
+
+<section id="loyihalar" class="wrap">
+  <div class="eyebrow">TC 00:02:00:00 — LOYIHALAR</div>
+  <div class="section-title">Tanlangan ishlar</div>
+
+  <div class="grid" id="projects-grid"></div>
+</section>
+
+<section id="konikmalar" class="wrap">
+  <div class="eyebrow">TC 00:03:00:00 — KO'NIKMALAR</div>
+  <div class="section-title">Vositalar</div>
+
+  <div class="skills-list">
+    <div class="skill-row">
+      <span class="name">Adobe Premiere Pro</span>
+      <span class="meter">
+        <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      </span>
+      <span class="skill-status">ASOSIY</span>
+    </div>
+    <div class="skill-row">
+      <span class="name">DaVinci Resolve</span>
+      <span class="meter">
+        <span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span>
+      </span>
+      <span class="skill-status">ISHLATILADI</span>
+    </div>
+    <div class="skill-row">
+      <span class="name">After Effects / Motion Graphics</span>
+      <span class="meter">
+        <span class="on"></span><span class="on"></span><span></span><span></span><span></span>
+      </span>
+      <span class="skill-status">O'RGANILMOQDA</span>
+    </div>
+    <div class="skill-row">
+      <span class="name">Rang korreksiyasi</span>
+      <span class="meter">
+        <span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span>
+      </span>
+      <span class="skill-status">ISHLATILADI</span>
+    </div>
+    <div class="skill-row">
+      <span class="name">Ovoz dizayni asoslari</span>
+      <span class="meter">
+        <span class="on"></span><span class="on"></span><span></span><span></span><span></span>
+      </span>
+      <span class="skill-status">ASOSLARI</span>
+    </div>
+  </div>
+</section>
+
+<section id="aloqa" class="wrap">
+  <div class="eyebrow">TC 00:04:00:00 — ALOQA</div>
+  <div class="section-title">Murojaat uchun</div>
+
+  <div class="contact-grid">
+    <div class="contact-links">
+      <a href="mailto:muhammaddiyormuhammadjonov22@gmail.com">muhammaddiyormuhammadjonov22@gmail.com →</a>
+      <a href="https://t.me/the_Muhammaddiyor" target="_blank" rel="noopener">Telegram →</a>
+      <a href="tel:+998770158082">+998 77 015 80 82 →</a>
+      <!-- Instagram hozircha professional yuritilmayapti, keyinroq qo'shiladi -->
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>© 2026 Muhammaddiyor</span>
+  <span id="tc-foot" class="rec"><span class="rec-dot"></span>REC 00:00:00:00</span>
+</footer>
+
+<script>
+  // Timecode ticker — dizayn elementi sifatida, video montaj muhitiga ishora
+  (function(){
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var el1 = document.getElementById('tc-live');
+    var el2 = document.getElementById('tc-foot');
+    if(reduced){ return; }
+    var start = Date.now();
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function frame(){
+      var elapsed = Date.now() - start;
+      var totalFrames = Math.floor(elapsed / (1000/25)); // 25fps ko'rinishi
+      var ff = totalFrames % 25;
+      var totalSec = Math.floor(totalFrames/25);
+      var ss = totalSec % 60;
+      var mm = Math.floor(totalSec/60) % 60;
+      var hh = Math.floor(totalSec/3600);
+      var tc = pad(hh)+':'+pad(mm)+':'+pad(ss)+':'+pad(ff);
+      if(el1) el1.textContent = tc;
+      if(el2) el2.innerHTML = '<span class="rec-dot"></span>REC ' + tc;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  // Asosiy reel — pastdagi tanlangan ishlardan avtomatik almashib turadi
+  (function(){
+    var REEL_ITEMS = [
+      { tag: "DOKUMENTALNIY REPORTAJ", title: "Termiz Muloqoti: Ekspertlar Nima Fikrlashadi?", href: "https://youtu.be/XBbJ7DKBQdU", bg: "https://img.youtube.com/vi/XBbJ7DKBQdU/hqdefault.jpg" },
+      { tag: "DARSLIK", title: "Rus tilini tezroq o'rganish uchun 3 ta qisqa yo'l", href: "https://youtu.be/ZQEDHuRWhRI", bg: "https://img.youtube.com/vi/ZQEDHuRWhRI/hqdefault.jpg" },
+      { tag: "PODCAST", title: "Biznesmen Marketolog Olishdan Avval O'zi Marketolog Bo'ladi!", href: "https://youtu.be/VGlK9HZjgGs", bg: "https://img.youtube.com/vi/VGlK9HZjgGs/hqdefault.jpg" },
+      { tag: "TADBIR", title: "Writing 5.5 va 7.5 Orasidagi Farq", href: "https://youtu.be/iq95KB103CY", bg: "https://img.youtube.com/vi/iq95KB103CY/hqdefault.jpg" },
+      { tag: "REKLAMA", title: "Fast Food Commercial", href: "https://www.instagram.com/p/DCJyKNjqktE/", bg: null },
+      { tag: "DOKUMENTALIY FILM", title: "\"TASHQARIDA\" — Mehnat Migratsiyasi Haqida Hujjatli Film", href: "https://youtu.be/TtNCdX1vw7I", bg: "https://img.youtube.com/vi/TtNCdX1vw7I/hqdefault.jpg" }
+    ];
+
+    var idx = 0;
+    var frameEl = document.getElementById('reel-frame');
+    var bgEl = document.getElementById('reel-bg');
+    var tagEl = document.getElementById('reel-tag');
+    var titleEl = document.getElementById('reel-title');
+    var counterEl = document.getElementById('reel-counter');
+
+    function render(i){
+      var item = REEL_ITEMS[i];
+      if(!frameEl) return;
+      bgEl.style.opacity = 0;
+      setTimeout(function(){
+        bgEl.style.backgroundImage = item.bg ? "url('" + item.bg + "')" : "linear-gradient(135deg,#1b1b1e,#0b0b0c)";
+        bgEl.style.opacity = 1;
+      }, 250);
+      tagEl.textContent = item.tag;
+      titleEl.textContent = item.title;
+      frameEl.href = item.href;
+      counterEl.textContent = (i+1) + " / " + REEL_ITEMS.length;
+    }
+
+    render(idx);
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduced){
+      setInterval(function(){
+        idx = (idx + 1) % REEL_ITEMS.length;
+        render(idx);
+      }, 4500);
+    }
+  })();
+
+  // Loyihalar kartalari — har bir toifa bir nechta video saqlashi mumkin.
+  // YANGI VIDEO QO'SHISH: kerakli toifaning "items" massiviga yana bitta
+  // { title, desc, href, bg } obyekti qo'shing — karta o'zi avtomatik
+  // ular orasida almashib turadi (asosiy reel kabi).
+  (function(){
+    var CATEGORIES = [
+      {
+        tag: "DOKUMENTALNIY REPORTAJ",
+        items: [
+          { title: "Termiz Muloqoti: Ekspertlar Nima Fikrlashadi?", desc: "Mijoz: Progressiv Islohotlar Markazi. Operator — Oybek Zokirov, Muhammaddiyor Mahamadjonov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/XBbJ7DKBQdU", bg: "https://img.youtube.com/vi/XBbJ7DKBQdU/hqdefault.jpg" },
+          { title: "\"Fuqarolik jamiyati haftaligi\": xalqaro va mahalliy ekspertlar qanday fikrda?", desc: "Mijoz: Progressiv Islohotlar Markazi. Operator — Muhammaddiyor Mahamadjonov, Ilhom Hamidov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/MZDiw9FtCTE", bg: "https://img.youtube.com/vi/MZDiw9FtCTE/hqdefault.jpg" }
+        ]
+      },
+      {
+        tag: "DARSLIK",
+        items: [
+          { title: "Rus tilini tezroq o'rganish uchun 3 ta qisqa yo'l", desc: "Mijoz: RAZGOVOR.UZ. Operator — Muhammaddiyor Mahamadjonov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/ZQEDHuRWhRI", bg: "https://img.youtube.com/vi/ZQEDHuRWhRI/hqdefault.jpg" },
+          { title: "NotebookLM – Bu sun'iy intellekt bilan 10x tezroq o'rganasiz", desc: "Mijoz: Najot Ta'lim. Operator — Muhammaddiyor Mahamadjonov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/uewtWnntOZM", bg: "https://img.youtube.com/vi/uewtWnntOZM/hqdefault.jpg" }
+          // Masalan, yana bitta darslik videosi qo'shish uchun shu yerga vergul bilan yana bitta obyekt yozing
+        ]
+      },
+      {
+        tag: "PODCAST",
+        items: [
+          { title: "Biznesmen Marketolog Olishdan Avval O'zi Marketolog Bo'ladi!", desc: "Mijoz: Raqamizatsiya podcast. Operator — Ibrohim Botirov, Muhammaddiyor Mahamadjonov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/VGlK9HZjgGs", bg: "https://img.youtube.com/vi/VGlK9HZjgGs/hqdefault.jpg" },
+          { title: "What's next for Uzbekistan? Ambassadors share insider views on reforms", desc: "Mijoz: Progressiv Islohotlar Markazi. Operator — Muhammaddiyor Mahamadjonov, Ilhom Hamidov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/llzNkUcfP1A", bg: "https://img.youtube.com/vi/llzNkUcfP1A/hqdefault.jpg" }
+        ]
+      },
+      {
+        tag: "TADBIR",
+        items: [
+          { title: "Writing 5.5 va 7.5 Orasidagi Farq", desc: "Mijoz: Cambridge Learning Center. Operator — Muhammaddiyor Mahamadjonov, Ibrohim Botirov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/iq95KB103CY", bg: "https://img.youtube.com/vi/iq95KB103CY/hqdefault.jpg" },
+          { title: "Til o'rganishdagi muammolarni davolaymiz!", desc: "Mijoz: Cambridge Learning Center. Operator — Muhammaddiyor Mahamadjonov, Ibrohim Botirov, Fathulla Ahmedov. Montajor — Muhammaddiyor Mahamadjonov.", href: "https://youtu.be/80uaQzze8Dk", bg: "https://img.youtube.com/vi/80uaQzze8Dk/hqdefault.jpg" }
+        ]
+      },
+      {
+        tag: "REKLAMA",
+        items: [
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/p/DCJyKNjqktE/", bg: null },
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/reel/DD_1WetO8uc/", bg: null },
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/reel/DEXXf_gt5Lj/", bg: null },
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/reel/DEmk_NwM7uz/", bg: null },
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/reel/DEz37_kO6NC/", bg: null },
+          { title: "Fast Food Commercial", desc: "Mijoz: LOOOK. DOP — Ibrohim Botirov. 1AC — Fathulla Ahmedov. Rassom — Elyor Rahmatullayev. Color — Muhammaddiyor Mahamadjonov. Make up — Shahrizoda. Dizayner — Jahongir G'ulomov. Edit — Muhammaddiyor Mahamadjonov.", href: "https://www.instagram.com/reel/DFNal9YtX15/", bg: null }
+        ]
+      },
+      {
+        tag: "DOKUMENTALIY FILM",
+        items: [
+          { title: "\"TASHQARIDA\" — Mehnat Migratsiyasi Haqida Hujjatli Film", desc: "Mijoz: Progressiv Islohotlar Markazi. G'oya muallifi — Mirshohid Aslanov. Maslahatchi — Aziz Rasulov. Prodyuser — Bahrom To'ychiyev. Rejissyor — Izzat Mansurov. Sahnalashtiruvchi operator — Ilhom Hamidov. Montaj rejissyori — Abdujalil Sultanov. Grafika ustasi — Muhammaddiyor Mahamadjonov. Muharrir — Mashxuraxon Rahmonova. Hisobchi — Zafar Sirojov. Koordinator — Ziyoda Rahimova. Texnik ko'mak — Mavluda Riskaliyeva.", href: "https://youtu.be/TtNCdX1vw7I", bg: "https://img.youtube.com/vi/TtNCdX1vw7I/hqdefault.jpg" },
+          { title: "Janubiy va Markaziy Osiyo", desc: "Mijoz: Progressiv Islohotlar Markazi. Sahnalashtiruvchi operator — Istedod Usmonov. Montaj rejissyori — Ilhom Hamidov. Grafika ustasi — Muhammaddiyor Mahamadjonov. Muharrir — Mashxuraxon Rahmonova.", href: "https://youtu.be/oe5w9vLaFzg", bg: "https://img.youtube.com/vi/oe5w9vLaFzg/hqdefault.jpg" }
+        ]
+      }
+    ];
+
+    var grid = document.getElementById('projects-grid');
+    if(!grid) return;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    CATEGORIES.forEach(function(cat){
+      var card = document.createElement('a');
+      card.className = 'card';
+      card.target = '_blank';
+      card.rel = 'noopener';
+      card.style.display = 'block';
+      card.style.color = 'inherit';
+
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.style.transition = 'background-image .4s ease';
+
+      var playIcon = document.createElement('div');
+      playIcon.className = 'play-icon';
+      playIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      thumb.appendChild(playIcon);
+
+      var counter = null;
+      if(cat.items.length > 1){
+        counter = document.createElement('span');
+        counter.className = 'dur';
+        thumb.appendChild(counter);
+      }
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      var tagEl = document.createElement('div');
+      tagEl.className = 'tag';
+      tagEl.textContent = cat.tag;
+      var h3 = document.createElement('h3');
+      var p = document.createElement('p');
+      info.appendChild(tagEl);
+      info.appendChild(h3);
+      info.appendChild(p);
+
+      card.appendChild(thumb);
+      card.appendChild(info);
+      grid.appendChild(card);
+
+      var idx = 0;
+      function render(){
+        var item = cat.items[idx];
+        thumb.style.backgroundImage = item.bg ? "url('" + item.bg + "')" : "linear-gradient(135deg,#1b1b1e,#0b0b0c)";
+        thumb.style.backgroundSize = 'cover';
+        thumb.style.backgroundPosition = 'center';
+        h3.textContent = item.title;
+        p.textContent = item.desc;
+        card.href = item.href;
+        if(counter) counter.textContent = (idx+1) + '/' + cat.items.length;
+      }
+      render();
+
+      if(cat.items.length > 1 && !reduced){
+        setInterval(function(){
+          idx = (idx + 1) % cat.items.length;
+          render();
+        }, 5000);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
